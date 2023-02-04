@@ -1,6 +1,50 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <dirent.h>
+
+
+//-------------------------------------tree-------------------------------------------
+void tree(char add[],int depth_input){
+    int depth=-1;
+    char add2[100];
+    strcpy(add2,add);
+    struct dirent *entry;
+    char dot[10]=".";
+    char d_dot[10]="..";
+    char back_s='\\';
+    DIR *dp=NULL;
+    int length=strlen(add);
+    for(int i=0;i<length;i++){
+        if(add[i]=='\\'){
+            depth++;
+        }
+    }
+    dp=opendir(add);
+    while(entry=readdir(dp)){
+        if(strcmp(entry->d_name,dot)!=0 && strcmp(entry->d_name,d_dot)!=0){
+            if(depth!=0){
+                printf("|");
+            }
+            for(int i=1;i<=depth;i++){
+                if(i==1){
+                    printf(" ");
+                }
+                else{
+                    printf("  ");
+                }
+            }
+            printf("|___%s\n",entry->d_name);
+            strcpy(add2,add);
+            strncat(add2,&back_s,1);
+            strcat(add2,entry->d_name);
+            if(depth<=depth_input-1 || depth_input==-1){
+                tree(add2,depth_input);
+            }
+        }
+    }
+}
+//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 int main(){
 char order[10];
@@ -54,7 +98,7 @@ scanf("%s",order);
             }
             ctr++;
          }
-         break;
+         printf("Success\n");
     }
 
 //=============================================================================================
@@ -148,7 +192,7 @@ scanf("%s",order);
         scanf("%d",&char_pos);
         write=fopen(address,"r");
          if(write==NULL){
-            printf("Invalid file");
+            printf("Invalid file\n");
             break;
          }
          else{
@@ -186,6 +230,7 @@ scanf("%s",order);
             array_input[ctr-1]='\0';
             strcat(file_str,array_input);
             strcat(undo_file,array_input);
+            printf("Success\n");
         }
         fclose(write);
         write=fopen(address,"w");
@@ -195,7 +240,6 @@ scanf("%s",order);
         write=fopen(undo_address,"w");
         fprintf(write,"%s",undo_file);
         fclose(write);
-        break;
     }
  //===================================================================================================
  else if(!strcmp(order,"cat")){ //-----------------------------cat-----------------------------------
@@ -239,7 +283,7 @@ scanf("%s",order);
          ctr=0;
          prt=fopen(address,"r");
          if(prt==NULL){
-            printf("Invalid file");
+            printf("Invalid file\n");
          }
          else{
           while(!feof(prt)){
@@ -247,8 +291,7 @@ scanf("%s",order);
             ctr++;
           }
           fclose(prt);
-          printf("%s",file_str);
-          break;
+          printf("%s\n",file_str);
          }
   }
 
@@ -310,7 +353,7 @@ scanf("%s",order);
          scanf("%s",direction); //-b(backward) or -f(forward)
          rmv=fopen(address,"r");
          if(rmv==NULL){
-            printf("Invalid file");
+            printf("Invalid file\n");
             break;
          }
          else if(!strcmp(direction,"-f")){
@@ -344,6 +387,7 @@ scanf("%s",order);
             array_input[ctr-1]='\0';
             strcat(file_str,array_input);
             strcat(undo_file,array_input);
+            printf("Success\n");
          }
          else if(!strcmp(direction,"-b")){
             for(int i=1;i<=line_pos;i++){
@@ -375,6 +419,7 @@ scanf("%s",order);
             array_input[ctr-1]='\0';
             strcat(file_str,array_input);
             strcat(undo_file,array_input);
+            printf("Success\n");
          }
          fclose(rmv);
          rmv=fopen(address,"w");
@@ -384,7 +429,6 @@ scanf("%s",order);
          rmv=fopen(undo_address,"w");
          fprintf(rmv,"%s",undo_file);
          fclose(rmv);
-         break;
 
   }
 //=============================================================================================
@@ -443,7 +487,7 @@ else if(!strcmp(order,"copystr")){ //-------------------------copy--------------
          scanf("%s",direction); //-b(backward) or -f(forward)
          cpy=fopen(address,"r");
          if(cpy==NULL){
-            printf("Invalid file");
+            printf("Invalid file\n");
             break;
          }
          else if(!strcmp(direction,"-f")){
@@ -473,6 +517,7 @@ else if(!strcmp(order,"copystr")){ //-------------------------copy--------------
             }
             array_input[ctr-1]='\0';
             strcat(file_str,array_input);
+            printf("Success\n");
          }
          else if(!strcmp(direction,"-b")){
             for(int i=1;i<=line_pos;i++){
@@ -501,6 +546,7 @@ else if(!strcmp(order,"copystr")){ //-------------------------copy--------------
             }
             array_input[ctr-1]='\0';
             strcat(file_str,array_input);
+            printf("Success\n");
          }
          fclose(cpy);
          cpy=fopen(address,"w");
@@ -567,7 +613,7 @@ else if(!strcmp(order,"cutstr")){ //----------------------cut-------------------
          scanf("%s",direction); //-b(backward) or -f(forward)
          cut=fopen(address,"r");
          if(cut==NULL){
-            printf("Invalid file");
+            printf("Invalid file\n");
             break;
          }
          else if(!strcmp(direction,"-f")){
@@ -600,6 +646,7 @@ else if(!strcmp(order,"cutstr")){ //----------------------cut-------------------
             array_input[ctr-1]='\0';
             strcat(file_str,array_input);
             strcat(undo_file,array_input);
+            printf("Success\n");
          }
          else if(!strcmp(direction,"-b")){
             for(int i=1;i<=line_pos;i++){
@@ -633,6 +680,7 @@ else if(!strcmp(order,"cutstr")){ //----------------------cut-------------------
             array_input[ctr-1]='\0';
             strcat(file_str,array_input);
             strcat(undo_file,array_input);
+            printf("Success\n");
          }
          fclose(cut);
          cut=fopen(address,"w");
@@ -642,7 +690,6 @@ else if(!strcmp(order,"cutstr")){ //----------------------cut-------------------
          cut=fopen(undo_address,"w");
          fprintf(cut,"%s",undo_file);
          fclose(cut);
-break;
  }
 //===========================================================================================
  else if(!strcmp(order,"pastestr")){ //----------------------paste---------------------------
@@ -696,7 +743,7 @@ break;
          scanf("%d",&char_pos);
          paste=fopen(address,"r");
          if(paste==NULL){
-            printf("Invalid file");
+            printf("Invalid file\n");
             break;
          }
          else{
@@ -734,6 +781,7 @@ break;
             array_input[ctr-1]='\0';
             strcat(file_str,array_input);
             strcat(undo_file,array_input);
+            printf("Success\n");
         }
         fclose(paste);
         paste=fopen(address,"w");
@@ -743,7 +791,6 @@ break;
         paste=fopen(undo_address,"w");
         fprintf(paste,"%s",undo_file);
         fclose(paste);
-        break;
 
  }
  //==================================================================================================================================
@@ -943,7 +990,7 @@ break;
                         pos_char_first=i;
                         pos_char_end=i+lenght-1;
                         if(!strcmp(order,"find")){
-                            printf("pos: line:%d char:%d",pos_line,pos_char);
+                            printf("pos: line:%d char:%d\n",pos_line,pos_char);
                             break;
                         }
                         else if(!strcmp(order,"replace")){
@@ -958,14 +1005,14 @@ break;
                                 z++;
                             }
                             strcat(file_str2,str_tmp);
-                            printf("Success");
+                            printf("Success\n");
                             break;
                         }
                     }
                     sprvisr=0;
                 }
                 if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             //111111111111111111111111111111111111111111111111111
@@ -1005,7 +1052,7 @@ break;
                             }
                         }
                         if(!strcmp(order,"find")){
-                            printf("pos: line:%d char:%d",pos_line,pos_char);
+                            printf("pos: line:%d char:%d\n",pos_line,pos_char);
                             break;
                         }
                         else if(!strcmp(order,"replace")){
@@ -1020,14 +1067,14 @@ break;
                                 z++;
                             }
                             strcat(file_str2,str_tmp);
-                            printf("Success");
+                            printf("Success\n");
                             break;
                         }
                     }
                     sprvisr=0;
                 }
                if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //2222222222222222222222222222222222222222222
@@ -1060,7 +1107,7 @@ break;
                         ok=1;
                         pos_char_first=i;
                         if(!strcmp(order,"find")){
-                            printf("pos: line:%d char:%d",pos_line,pos_char);
+                            printf("pos: line:%d char:%d\n",pos_line,pos_char);
                             break;
                         }
                         else if(!strcmp(order,"replace")){
@@ -1079,14 +1126,14 @@ break;
                                 z++;
                             }
                             strcat(file_str2,str_tmp);
-                            printf("Success");
+                            printf("Success\n");
                             break;
                         }
                     }
                     sprvisr=0;
                 }
                if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //3333333333333333333333333333333333333333333333
@@ -1126,7 +1173,7 @@ break;
                             }
                         }
                         if(!strcmp(order,"find")){
-                            printf("pos: line:%d char:%d",pos_line,pos_char);
+                            printf("pos: line:%d char:%d\n",pos_line,pos_char);
                             break;
                         }
                         else if(!strcmp(order,"replace")){
@@ -1145,14 +1192,14 @@ break;
                                 z++;
                             }
                             strcat(file_str2,str_tmp);
-                            printf("Success");
+                            printf("Success\n");
                             break;
                         }
                     }
                     sprvisr=0;
                 }
                if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //444444444444444444444444444444444444444444444
@@ -1203,7 +1250,7 @@ break;
                         }
                         if(sprvisr==2){
                             if(!strcmp(order,"find")){
-                                printf("pos: line:%d char:%d",pos_line,pos_char);
+                                printf("pos: line:%d char:%d\n",pos_line,pos_char);
                                 break;
                             }
                             else if(!strcmp(order,"replace")){
@@ -1218,7 +1265,7 @@ break;
                                     z++;
                                 }
                                 strcat(file_str2,str_tmp);
-                                printf("Success");
+                                printf("Success\n");
                                 break;
                             }
                         }
@@ -1226,7 +1273,7 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             //5555555555555555555555555555555555555555555555
@@ -1278,7 +1325,7 @@ break;
                         }
                         if(sprvisr==2){
                             if(!strcmp(order,"find")){
-                                printf("pos: line:%d char:%d",pos_line,pos_char);
+                                printf("pos: line:%d char:%d\n",pos_line,pos_char);
                                 break;
                             }
                             else if(!strcmp(order,"replace")){
@@ -1293,7 +1340,7 @@ break;
                                     z++;
                                 }
                                 strcat(file_str2,str_tmp);
-                                printf("Success");
+                                printf("Success\n");
                                 break;
                             }
                         }
@@ -1301,7 +1348,7 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
         }
@@ -1364,10 +1411,10 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
                 else{
-                    printf("count:%d",count);
+                    printf("count:%d\n",count);
                 }
             }
             //111111111111111111111111111111111111111111111111111
@@ -1407,10 +1454,10 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
                else{
-                printf("count:%d",count);
+                printf("count:%d\n",count);
                }
             }
             //2222222222222222222222222222222222222222222
@@ -1442,10 +1489,10 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
                else{
-                    printf("count:%d",count);
+                    printf("count:%d\n",count);
                }
             }
             //3333333333333333333333333333333333333333333333
@@ -1483,10 +1530,10 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
                else{
-                printf("count:%d",count);
+                printf("count:%d\n",count);
                }
             }
             //444444444444444444444444444444444444444444444
@@ -1535,10 +1582,10 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
                 else{
-                    printf("count:%d",count);
+                    printf("count:%d\n",count);
                 }
             }
             //5555555555555555555555555555555555555555555555
@@ -1587,10 +1634,10 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
                 else{
-                    printf("count:%d",count);
+                    printf("count:%d\n",count);
                 }
             }
             }
@@ -1659,7 +1706,7 @@ break;
                             ok=1;
                             pos_char_first=i;
                             if(!strcmp(order,"find")){
-                                printf("at:%d /pos: line:%d char:%d",at,pos_line,pos_char);
+                                printf("at:%d /pos: line:%d char:%d\n",at,pos_line,pos_char);
                                 break;
                             }
                             else if(!strcmp(order,"replace")){
@@ -1674,7 +1721,7 @@ break;
                                     z++;
                                 }
                                 strcat(file_str2,str_tmp);
-                                printf("Success");
+                                printf("Success\n");
                                 break;
                             }
                         }
@@ -1683,7 +1730,7 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count!=at){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             //111111111111111111111111111111111111111111111111111
@@ -1726,7 +1773,7 @@ break;
                         if(count==at){
                             ok=1;
                             if(!strcmp(order,"find")){
-                                printf("at:%d /pos: line:%d char:%d",at,pos_line,pos_char);
+                                printf("at:%d /pos: line:%d char:%d\n",at,pos_line,pos_char);
                                 break;
                             }
                             else if(!strcmp(order,"replace")){
@@ -1741,7 +1788,7 @@ break;
                                     z++;
                                 }
                                 strcat(file_str2,str_tmp);
-                                printf("Success");
+                                printf("Success\n");
                                 break;
                             }
                         }
@@ -1750,7 +1797,7 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count!=at){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //2222222222222222222222222222222222222222222
@@ -1786,7 +1833,7 @@ break;
                         if(count==at){
                             ok=1;
                             if(!strcmp(order,"find")){
-                                printf("at:%d /pos: line:%d char:%d",at,pos_line,pos_char);
+                                printf("at:%d /pos: line:%d char:%d\n",at,pos_line,pos_char);
                                 break;
                             }
                             else if(!strcmp(order,"replace")){
@@ -1805,7 +1852,7 @@ break;
                                     z++;
                                 }
                                 strcat(file_str2,str_tmp);
-                                printf("Success");
+                                printf("Success\n");
                                 break;
                             }
                         }
@@ -1814,7 +1861,7 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count!=at){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //3333333333333333333333333333333333333333333333
@@ -1857,7 +1904,7 @@ break;
                         if(count==at){
                             ok=1;
                             if(!strcmp(order,"find")){
-                                printf("at:%d /pos: line:%d char:%d",at,pos_line,pos_char);
+                                printf("at:%d /pos: line:%d char:%d\n",at,pos_line,pos_char);
                                 break;
                             }
                             else if(!strcmp(order,"replace")){
@@ -1876,7 +1923,7 @@ break;
                                     z++;
                                 }
                                 strcat(file_str2,str_tmp);
-                                printf("Success");
+                                printf("Success\n");
                                 break;
                             }
                         }
@@ -1885,7 +1932,7 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count!=at){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //444444444444444444444444444444444444444444444
@@ -1939,7 +1986,7 @@ break;
                             if(count==at){
                                 ok=1;
                                 if(!strcmp(order,"find")){
-                                    printf("at:%d /pos: line:%d char:%d",at,pos_line,pos_char);
+                                    printf("at:%d /pos: line:%d char:%d\n",at,pos_line,pos_char);
                                     break;
                                 }
                                 else if(!strcmp(order,"replace")){
@@ -1954,7 +2001,7 @@ break;
                                         z++;
                                     }
                                     strcat(file_str2,str_tmp);
-                                    printf("Success");
+                                    printf("Success\n");
                                     break;
                                 }
                             }
@@ -1964,7 +2011,7 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count!=at){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             //5555555555555555555555555555555555555555555555
@@ -2019,7 +2066,7 @@ break;
                             if(count==at){
                                 ok=1;
                                 if(!strcmp(order,"find")){
-                                    printf("at:%d /pos: line:%d char:%d",at,pos_line,pos_char);
+                                    printf("at:%d /pos: line:%d char:%d\n",at,pos_line,pos_char);
                                     break;
                                 }
                                 else if(!strcmp(order,"replace")){
@@ -2034,7 +2081,7 @@ break;
                                         z++;
                                     }
                                     strcat(file_str2,str_tmp);
-                                    printf("Success");
+                                    printf("Success\n");
                                     break;
                                 }
                             }
@@ -2044,7 +2091,7 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count!=at){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             }
@@ -2103,13 +2150,13 @@ break;
                         }
                     }
                     if(sprvisr==0 && file_str[i]==str[0]){
-                        printf("byword: pos: line:%d word:%d",pos_line,pos_word);
+                        printf("byword: pos: line:%d word:%d\n",pos_line,pos_word);
                         break;
                     }
                     sprvisr=0;
                 }
                 if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             //111111111111111111111111111111111111111111111111111
@@ -2145,13 +2192,13 @@ break;
                                     break;
                             }
                         }
-                        printf("byword: pos: line:%d word:%d",pos_line,pos_word);
+                        printf("byword: pos: line:%d word:%d\n",pos_line,pos_word);
                         break;
                     }
                     sprvisr=0;
                 }
                if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //2222222222222222222222222222222222222222222
@@ -2181,13 +2228,13 @@ break;
                         }
                     }
                     if(sprvisr==0 && file_str[i]==str[0]){
-                        printf("byword: pos: line:%d word:%d",pos_line,pos_word);
+                        printf("byword: pos: line:%d word:%d\n",pos_line,pos_word);
                         break;
                     }
                     sprvisr=0;
                 }
                if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //3333333333333333333333333333333333333333333333
@@ -2223,13 +2270,13 @@ break;
                                     break;
                             }
                         }
-                        printf("byword: pos: line:%d word:%d",pos_line,pos_word);
+                        printf("byword: pos: line:%d word:%d\n",pos_line,pos_word);
                         break;
                     }
                     sprvisr=0;
                 }
                if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //444444444444444444444444444444444444444444444
@@ -2275,14 +2322,14 @@ break;
                              }
                         }
                         if(sprvisr==2){
-                            printf("byword: pos: line:%d word:%d",pos_line,pos_word);
+                            printf("byword: pos: line:%d word:%d\n",pos_line,pos_word);
                             break;
                         }
                     }
                     sprvisr=0;
                 }
                 if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             //5555555555555555555555555555555555555555555555
@@ -2328,14 +2375,14 @@ break;
                             sprvisr=2;
                         }
                         if(sprvisr==2){
-                            printf("byword: pos: line:%d word:%d",pos_line,pos_word);
+                            printf("byword: pos: line:%d word:%d\n",pos_line,pos_word);
                             break;
                         }
                     }
                     sprvisr=0;
                 }
                 if(i==ctr){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             }
@@ -2424,7 +2471,7 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             //111111111111111111111111111111111111111111111111111
@@ -2491,7 +2538,7 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //2222222222222222222222222222222222222222222
@@ -2554,7 +2601,7 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //3333333333333333333333333333333333333333333333
@@ -2625,7 +2672,7 @@ break;
                     sprvisr=0;
                 }
                if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                }
             }
             //444444444444444444444444444444444444444444444
@@ -2703,7 +2750,7 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             //5555555555555555555555555555555555555555555555
@@ -2782,7 +2829,7 @@ break;
                     sprvisr=0;
                 }
                 if(i==ctr && count==0){
-                    printf("Invalid string");
+                    printf("Invalid string\n");
                 }
             }
             }
@@ -2798,7 +2845,6 @@ break;
             fprintf(find,"%s",undo_file);
             fclose(find);
         }
-         break;
  }
 //======================================================================================================
  else if(!strcmp(order,"grep")){//--------------------------------grep----------------------------------
@@ -2955,9 +3001,8 @@ break;
             check=0;
         }
         if(feature==1){
-            printf("%d",count);
+            printf("%d\n",count);
         }
-    break;
  }
 //============================================================================================
  else if(!strcmp(order,"undo")){ //---------------------------undo----------------------------
@@ -3015,7 +3060,7 @@ break;
          fopen(address,"w");
          fprintf(undo,"%s",undo_file);
          fclose(undo);
-         break;
+         printf("Success\n");
  }
 //=================================================================================================
  else if(!strcmp(order,"auto-indent")){ //---------------------auto-indent-------------------------
@@ -3154,7 +3199,7 @@ break;
          auto_ind=fopen(address,"w");
          fprintf(auto_ind,"%s",file_str2);
          fclose(auto_ind);
-         break;
+         printf("Success\n");
  }
 //============================================================================================
  else if(!strcmp(order,"compare")){ //----------------------compare---------------------------
@@ -3322,9 +3367,27 @@ break;
             memset(line_str2,0,sizeof(line_str2));
             line++;
         }
-        break;
  }
 //============================================================================================
+ else if(!strcmp(order,"tree")){//-------------------------tree-------------------------------
+    int depth_input;
+    char address[100]="C:\\root";
+    scanf("%d",&depth_input);
+    tree(address,depth_input);
+ }
+//============================================================================================
+ else if(!strcmp(order,"exit")){//--------------------------exit------------------------------
+    printf("The program ended");
+    break;
+ }
+//============================================================================================
+ else{ //-----------------------------------Invalid order-------------------------------------
+    char chert[100];
+    gets(chert);
+    printf("Invalid order\n");
+ }
+//===========================================================================================
+scanf("%s",order);
 }
  return 0;
 }
