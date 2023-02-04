@@ -3373,7 +3373,12 @@ else if(!strcmp(order,"cutstr")){ //----------------------cut-------------------
     int depth_input;
     char address[100]="C:\\root";
     scanf("%d",&depth_input);
-    tree(address,depth_input);
+    if(depth_input<-1){
+        printf("Invalid depth\n");
+    }
+    else{
+        tree(address,depth_input);
+    }
  }
 //============================================================================================
  else if(!strcmp(order,"exit")){//--------------------------exit------------------------------
